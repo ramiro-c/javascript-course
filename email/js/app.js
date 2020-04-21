@@ -2,6 +2,8 @@ const email = document.getElementById("email");
 const asunto = document.getElementById("asunto");
 const mensaje = document.getElementById("mensaje");
 const btnEnviar = document.getElementById("enviar");
+const btnReset = document.getElementById("resetBtn");
+const formulario = document.getElementById("enviar-mail");
 
 // Event listeners
 eventListeners();
@@ -11,6 +13,8 @@ function eventListeners() {
   email.addEventListener("blur", validarCampo);
   asunto.addEventListener("blur", validarCampo);
   mensaje.addEventListener("blur", validarCampo);
+  formulario.addEventListener("submit", enviarMail);
+  btnReset.addEventListener("click", resetFormulario);
 }
 
 function inicioApp() {
@@ -28,8 +32,9 @@ function validarCampo() {
     email.value !== "" &&
     asunto.value !== "" &&
     mensaje.value !== ""
-  )
+  ) {
     btnEnviar.disabled = false;
+  }
 }
 function validarLongitud(campo) {
   if (campo.value.length > 0) {
@@ -50,4 +55,31 @@ function validarEmail(email) {
     email.style.borderBottomColor = "red";
     email.classList.add("error");
   }
+}
+
+function enviarMail(e) {
+  e.preventDefault();
+  const spinnerGif = document.querySelector("#spinner");
+  spinnerGif.style.display = "block";
+
+  const mailGif = document.createElement("img");
+  mailGif.src = "img/mail.gif";
+  mailGif.style.display = "block";
+
+  // eliminar el spinner por el gif de mail enviado
+  setTimeout(() => {
+    spinnerGif.style.display = "none";
+    document.querySelector("#loaders").appendChild(mailGif);
+  }, 3000);
+
+  // eliminar el gif de mail enviado y resetear el formulario
+  setTimeout(() => {
+    mailGif.remove();
+    resetFormulario();
+  }, 3000);
+}
+
+function resetFormulario(e) {
+  e.preventDefault();
+  formulario.reset();
 }
