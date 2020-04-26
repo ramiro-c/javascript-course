@@ -13,13 +13,13 @@ class Seguro {
 
     switch (this.marca) {
       case "1":
-        cantidad = base * 1.15;
+        cantidad = precioBase * 1.15;
         break;
       case "2":
-        cantidad = base * 1.05;
+        cantidad = precioBase * 1.05;
         break;
       case "3":
-        cantidad = base * 1.35;
+        cantidad = precioBase * 1.35;
         break;
       default:
         break;
@@ -30,24 +30,62 @@ class Seguro {
     cantidad -= diferencia * cantidad * 0.03;
     // basico se agrega un 30% mas
     // completo se agrega un 50% mas
-    if (this.tipo === "basico") return cantidad * 1.3;
-    return cantidad * 1.5;
+    return this.tipo === "basico" ? cantidad * 1.3 : cantidad * 1.5;
   }
 }
 
 // todo lo que se muestra en pantalla
 class Interfaz {
-  mostrarError(mensaje, tipo) {
+  mostrarMensaje(mensaje, tipo) {
     const div = document.createElement("div");
+
     if (tipo === "error") {
       div.classList.add("mensaje", "error");
     } else {
-      div.classList.add("mensaje", "correcto");
+      div.classList.add("mensaje", "exito");
     }
+
     div.innerHTML = `${mensaje}`;
     formulario.insertBefore(div, document.querySelector(".form-group"));
+
     setTimeout(() => {
       document.querySelector(".mensaje").remove();
+    }, 3000);
+  }
+
+  mostrarResultado(seguro, total) {
+    const resultado = document.getElementById("resultado");
+    let marca;
+
+    switch (seguro.marca) {
+      case "1":
+        marca = "Americano";
+        break;
+      case "2":
+        marca = "Asiatico";
+        break;
+      case "3":
+        marca = "Europeo";
+        break;
+      default:
+        break;
+    }
+
+    const div = document.createElement("div");
+    div.innerHTML = `
+        <p class="header">Tu Resumen:</p>
+        <p>Marca: ${marca}</p>
+        <p>Año: ${seguro.anio}</p>
+        <p>Tipo: ${seguro.tipo}</p>
+        <p>Total: ${total}</p>
+    `;
+
+    const spinner = document.querySelector("#cargando img");
+    spinner.style.display = "block";
+
+    setTimeout(() => {
+      spinner.style.display = "none";
+      resultado.appendChild(div);
     }, 3000);
   }
 }
@@ -70,14 +108,21 @@ formulario.addEventListener("submit", function (e) {
   const tipo = document.querySelector('input[name="tipo"]:checked').value;
 
   const interfaz = new Interfaz();
+
   if (marcaSeleccionada === "" || anioSeleccionado === "" || tipo === "") {
-    interfaz.mostrarError(
+    interfaz.mostrarMensaje(
       "Faltan datos, revise el formulario e intente otra vez!",
       "error"
     );
   } else {
+    const resultados = document.querySelector("#resultado div");
+    if (resultados != null) resultado.remove();
+
     const seguro = new Seguro(marcaSeleccionada, anioSeleccionado, tipo);
     const cantidad = seguro.cotizar();
+
+    interfaz.mostrarMensaje("Cotizando...", "exito");
+    interfaz.mostrarResultado(seguro, cantidad);
   }
 });
 
