@@ -1,7 +1,7 @@
-// Variables
+// variables
 const presupuestoSemanal = prompt("Cual es tu presupuesto Semanal?");
 const formulario = document.getElementById("agregar-gasto");
-let cantidadPresupuesto;
+let presupuestoUsuario;
 
 class Presupuesto {
   constructor(cantidad) {
@@ -44,6 +44,7 @@ class UI {
       formulario.reset();
     }, 3000);
   }
+
   // inserta los gastos a la lista
   agregarGastoListado(nombre, cantidad) {
     const gastosListado = document.querySelector("#gastos ul");
@@ -59,6 +60,35 @@ class UI {
 
     gastosListado.appendChild(li);
   }
+
+  // actualiza el presupuesto restante
+  actualizarPresupuestoRestante(cantidad) {
+    const restanteSpan = document.querySelector("span#restante");
+    // obtenemos el presupuesto restante
+    const presupuestoRestante = presupuestoUsuario.presupuestoRestante(
+      cantidad
+    );
+
+    restanteSpan.innerHTML = `${presupuestoRestante}`;
+
+    this.actualizarColorPresupuestoRestante();
+  }
+
+  // cambia de color el presupuesto restante
+  actualizarColorPresupuestoRestante() {
+    const presupuestoTotal = presupuestoUsuario.presupuesto;
+    const presupuestoRestante = presupuestoUsuario.restante;
+    const restante = document.querySelector(".restante");
+
+    // Comprobar el 25%
+    if (presupuestoTotal / 4 > presupuestoRestante) {
+      restante.classList.remove("alert-success", "alert-warning");
+      restante.classList.add("alert-danger");
+    } else if (presupuestoTotal / 2 > presupuestoRestante) {
+      restante.classList.remove("alert-success");
+      restante.classList.add("alert-warning");
+    }
+  }
 }
 
 // Event Listeners
@@ -66,9 +96,9 @@ document.addEventListener("DOMContentLoaded", function () {
   if (presupuestoSemanal <= 0 || presupuestoSemanal === "") {
     // window.location.reload();
   }
-  const presupuesto = new Presupuesto(presupuestoSemanal);
+  presupuestoUsuario = new Presupuesto(presupuestoSemanal);
   const ui = new UI();
-  ui.insertarPresupuesto(presupuesto.presupuesto);
+  ui.insertarPresupuesto(presupuestoUsuario.presupuesto);
 });
 
 formulario.addEventListener("submit", function (e) {
@@ -81,8 +111,13 @@ formulario.addEventListener("submit", function (e) {
   // comprobar que los campos no esten vacios
   if (nombreGasto === "" || cantidadGasto === "") {
     ui.imprimirMensaje("Los dos campos son obligatorios", "error");
-  } else {
-    ui.imprimirMensaje("Gasto insertado con exito", "exito");
-    ui.agregarGastoListado(nombreGasto, cantidadGasto);
+    return;
   }
+  if (cantidadGasto < 0) {
+    ui.imprimirMensaje("El gasto debe ser un numero positivo", "error");
+    return;
+  }
+  ui.imprimirMensaje("Gasto insertado con exito", "exito");
+  ui.agregarGastoListado(nombreGasto, cantidadGasto);
+  ui.actualizarPresupuestoRestante(cantidadGasto);
 });
