@@ -1,11 +1,9 @@
-document
-  .querySelector("#generar-nombre")
-  .addEventListener("submit", cargarNombres);
+const formulario = document.querySelector("#generar-nombre");
+
+formulario.addEventListener("submit", cargarNombres);
 
 function cargarNombres(e) {
   e.preventDefault();
-
-  // Leer las variables
 
   const origen = document.getElementById("origen");
   const origenSeleccionado = origen.options[origen.selectedIndex].value;
@@ -26,4 +24,26 @@ function cargarNombres(e) {
   if (cantidad !== "") {
     url += `results=${cantidad}`;
   }
+  console.log(url);
+  // Conectar con ajax
+  const xhr = new XMLHttpRequest();
+  xhr.open("GET", url, true);
+
+  xhr.onload = function () {
+    if (this.status === 200) {
+      const respuesta = JSON.parse(this.responseText);
+      const personas = respuesta.results;
+
+      let htmlNombres = "<h2>Nombres Generados</h2>";
+      htmlNombres += '<ul class="lista">';
+      personas.map((persona) => {
+        const nombre = persona.name.first;
+        htmlNombres += `<li>${nombre}</li>`;
+      });
+      htmlNombres += "</ul>";
+
+      document.getElementById("resultado").innerHTML = htmlNombres;
+    }
+  };
+  xhr.send();
 }
