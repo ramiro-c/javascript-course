@@ -80,7 +80,7 @@ class UI {
     const presupuestoRestante = presupuestoUsuario.restante;
     const restante = document.querySelector(".restante");
 
-    // Comprobar el 25%
+    // comprobar el 25% y el 50%
     if (presupuestoTotal / 4 > presupuestoRestante) {
       restante.classList.remove("alert-success", "alert-warning");
       restante.classList.add("alert-danger");
@@ -94,7 +94,7 @@ class UI {
 // Event Listeners
 document.addEventListener("DOMContentLoaded", function () {
   if (presupuestoSemanal <= 0 || presupuestoSemanal === "") {
-    // window.location.reload();
+    window.location.reload();
   }
   presupuestoUsuario = new Presupuesto(presupuestoSemanal);
   const ui = new UI();
@@ -103,6 +103,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 formulario.addEventListener("submit", function (e) {
   e.preventDefault();
+
   const nombreGasto = document.getElementById("gasto").value;
   const cantidadGasto = document.getElementById("cantidad").value;
 
