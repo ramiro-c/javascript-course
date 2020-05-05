@@ -24,26 +24,26 @@ function cargarNombres(e) {
   if (cantidad !== "") {
     url += `results=${cantidad}`;
   }
-  console.log(url);
-  // Conectar con ajax
-  const xhr = new XMLHttpRequest();
-  xhr.open("GET", url, true);
 
-  xhr.onload = function () {
-    if (this.status === 200) {
-      const respuesta = JSON.parse(this.responseText);
-      const personas = respuesta.results;
-
+  fetch(url)
+    .then(function (res) {
+      return res.json();
+    })
+    .then(function (data) {
       let htmlNombres = "<h2>Nombres Generados</h2>";
       htmlNombres += '<ul class="lista">';
-      personas.map((persona) => {
-        const nombre = persona.name.first;
-        htmlNombres += `<li>${nombre}</li>`;
-      });
-      htmlNombres += "</ul>";
+      const personas = data.results;
 
+      personas.map((persona) => {
+        htmlNombres += `<li>${persona.name.first}</li>`;
+      });
+
+      htmlNombres += "</ul>";
       document.getElementById("resultado").innerHTML = htmlNombres;
-    }
-  };
-  xhr.send();
+    })
+    .catch(function (error) {
+      let htmlError = "<p>Hubo un error, intente nuevamente</p>";
+      console.error(error);
+      document.getElementById("resultado").innerHTML = htmlError;
+    });
 }
