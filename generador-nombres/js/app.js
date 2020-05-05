@@ -26,10 +26,8 @@ function cargarNombres(e) {
   }
 
   fetch(url)
-    .then(function (res) {
-      return res.json();
-    })
-    .then(function (data) {
+    .then((res) => res.json())
+    .then((data) => {
       let htmlNombres = "<h2>Nombres Generados</h2>";
       htmlNombres += '<ul class="lista">';
       const personas = data.results;
@@ -41,7 +39,7 @@ function cargarNombres(e) {
       htmlNombres += "</ul>";
       document.getElementById("resultado").innerHTML = htmlNombres;
     })
-    .catch(function (error) {
+    .catch((error) => {
       let htmlError = "<p>Hubo un error, intente nuevamente</p>";
       console.error(error);
       document.getElementById("resultado").innerHTML = htmlError;
